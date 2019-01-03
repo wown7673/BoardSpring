@@ -1,9 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="board">
+
      <select id="selectBoardList" resultType="hashmap" parameterType="hashmap">
        <![CDATA[
-            SELECT SEQ FROM BOARD
+       SELECT 
+       		RNUM
+           	, B.SEQ 
+           	, B.PARENT_SEQ
+           	, B.TITLE
+           	, B.CONTENT
+           	, B.HIT_CNT
+           	, B.DEL_YN
+           	, DECODE( FLOOR(SYSDATE - B.CREA_DATE) ,
+           				0 , TO_CHAR(B.CREA_DATE, 'HH24:MI')
+           				, TO_CHAR( B.CREA_DATE , 'YYYY.MM.DD' )
+           			) AS CREA_DATE
+           	, B.CREA_ID       		
+       		
+       	FROM
+       		(
+		       	SELECT 
+		       		ROWNUM AS RNUM
+		       		,A.*
+		       	FROM 
+		       	(
+		            SELECT 
+							*
+		            FROM BOARD 
+		            WHERE 1=1
+		            ]]>
+					<if test="search != null">
+					    AND TITLE LIKE '%' || #{search} || '%'
+					    OR
+					    CONTENT LIKE '%' || #{search} || '%'
+					</if>
+					<![CDATA[
+		            ORDER BY SEQ DESC 
+		        ) A
+		        WHERE ROWNUM <= #{ENDROW}
+		    ) B
+		WHERE B.RNUM >= #{STARTROW}
         ]]> 
     </select>
+ 
+    <select id="selectBoardCnt" resultType="int">
+    	SELECT COUNT(*)
+    	FROM BOARD
+    </select>
+    
+     <select id="selectBoard" parameterType="hashmap" resultType="hashmap">
+    	SELECT 
+    		SEQ
+    		,PARENT_SEQ
+    		,TITLE
+    		,CONTENT
+    		,HIT_CNT
+    		,DEL_YN
+         	, DECODE( FLOOR(SYSDATE - CREA_DATE) ,
+       				0 , TO_CHAR(CREA_DATE, 'HH24:MI')
+       				, TO_CHAR( CREA_DATE , 'YYYY.MM.DD' )
+       			) AS CREA_DATE  		
+    		,CREA_ID
+    	FROM BOARD
+    	WHERE 
+    		SEQ = #{SEQ}
+    </select>   
+     
+     
+     
+     <insert id="insertBoard" parameterType="hashmap">
+     	INSERT INTO BOARD
+     			(
+     				SEQ
+		    		,PARENT_SEQ
+		    		,TITLE
+		    		,CONTENT
+		    		,HIT_CNT
+		    		,DEL_YN
+		    		,CREA_DATE
+		    		,CREA_ID   							
+     			)
+     	VALUES
+     			(
+     				SEQ_BOARD.NEXTVAL
+     				,SEQ_BOARD.CURRVAL
+     				,#{TITLE}
+     				,#{CONTENT}
+     				,0
+     				,0
+     				,SYSDATE
+     				,'ADMIN'
+     			)		
+     </insert>
 </mapper>

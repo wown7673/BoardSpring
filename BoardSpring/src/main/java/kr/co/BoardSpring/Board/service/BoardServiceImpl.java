@@ -8,7 +8,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import kr.co.BoardSpring.Board.dao.BoardDAO;
-import kr.co.BoardSpring.common.common.CommandMap;
+import kr.co.BoardSpring.common.to.PageInfo;
 
 @Service("boardService")
 public class BoardServiceImpl implements BoardService{
@@ -17,11 +17,38 @@ public class BoardServiceImpl implements BoardService{
 	private BoardDAO boardDAO;
 	
 	@Override
-	public List<Map<String, Object>> selectBoardList(CommandMap commandMap) {
+	public PageInfo selectBoardList(Map<String, Object> map) {
 		
-		List<Map<String,Object>> list = boardDAO.selectBoardList(commandMap);
+		int page = Integer.parseInt((String)map.get("page"));
+		int totalCnt = boardDAO.selectBoardCnt();
+		PageInfo pageinfo = new PageInfo(page, totalCnt);
+		int startRow = pageinfo.getStartRow();
+		int endRow = pageinfo.getEndRow();
+
+		map.put("STARTROW", startRow);
+		map.put("ENDROW", endRow);
 		
-		return list;
+		
+		
+		List<Map<String,Object>> list = boardDAO.selectBoardList(map);
+		pageinfo.setList(list);
+		
+		//System.out.println( boardDAO.selectBoardList(map) );
+		
+		return pageinfo;
 	}
+
+	@Override
+	public Map<String, Object> selectBoard(Map<String, Object> map) {
+		Map<String,Object> board = boardDAO.selectBoard(map);
+		return board;
+	}
+
+	@Override
+	public void insertBoard(Map<String, Object> map) {
+		boardDAO.insertBoard(map);
+		
+	}
+
 
 }
