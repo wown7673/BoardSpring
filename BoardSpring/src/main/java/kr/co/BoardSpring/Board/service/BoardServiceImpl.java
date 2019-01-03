@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import kr.co.BoardSpring.Board.dao.BoardDAO;
+import kr.co.BoardSpring.common.common.CommandMap;
 
 @Service("boardService")
 public class BoardServiceImpl implements BoardService{
@@ -16,7 +17,7 @@ public class BoardServiceImpl implements BoardService{
 	private BoardDAO boardDAO;
 	
 	@Override
-	public List<Map<String, Object>> selectBoardList(Map<String, Object> commandMap) {
+	public List<Map<String, Object>> selectBoardList(CommandMap commandMap) {
 		
 		List<Map<String,Object>> list = boardDAO.selectBoardList(commandMap);
 		

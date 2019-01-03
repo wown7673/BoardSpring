@@ -5,12 +5,13 @@ import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
+import kr.co.BoardSpring.common.common.CommandMap;
 import kr.co.BoardSpring.common.dao.AbstractDAO;
 
 @Repository("boardDAO")
 public class BoardDAO extends AbstractDAO{
 
-	public List<Map<String, Object>> selectBoardList(Map<String, Object> commandMap) {
+	public List<Map<String, Object>> selectBoardList(CommandMap commandMap) {
 		List<Map<String, Object>> list = (List<Map<String, Object>> )selectList("board.selectBoardList", commandMap);
 		return list;
 	}
